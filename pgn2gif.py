@@ -26,25 +26,100 @@ BP_img = Image.open('images/BlackPawn.png')
 
 PIECES2IMAGES = {'WK': WK_img, 'BK': BK_img, 'WQ': WQ_img, 'BQ': BQ_img, 'WR': WR_img, 'BR': BR_img,
                 'WB': WB_img, 'BB': BB_img, 'WN': WN_img, 'BN': BN_img, 'WP': WP_img, 'BP': BP_img}
-FILE2X = {'a': 0, 'b': 64, 'c': 128, 'd': 192, 'e': 256, 'f': 320, 'g': 384, 'h': 448}
-RANK2Y = {'8': 0, '7': 64, '6': 128, '5': 192, '4': 256, '3': 320, '2': 384, '1': 448}
 
-game_state = {'a8':'BR', 'b8': 'BN', 'c8': 'BB', 'd8': 'BQ', 'e8': 'BK', 'f8': 'BB', 'g8': 'BN', 'h8': 'BR',
-              'a7':'BP', 'b7': 'BP', 'c7': 'BP', 'd7': 'BP', 'e7': 'BP', 'f7': 'BP', 'g7': 'BP', 'h7': 'BP',
-              'a6':'', 'b6': '', 'c6': '', 'd6': '', 'e6': '', 'f6': '', 'g6': '', 'h6': '',
-              'a5':'', 'b5': '', 'c5': '', 'd5': '', 'e5': '', 'f5': '', 'g5': '', 'h5': '',
-              'a4':'', 'b4': '', 'c4': '', 'd4': '', 'e4': '', 'f4': '', 'g4': '', 'h4': '',
-              'a3':'', 'b3': '', 'c3': '', 'd3': '', 'e3': '', 'f3': '', 'g3': '', 'h3': '',
-              'a2':'WP', 'b2': 'WP', 'c2': 'WP', 'd2': 'WP', 'e2': 'WP', 'f2': 'WP', 'g2': 'WP', 'h2': 'WP',
-              'a1':'WR', 'b1': 'WN', 'c1': 'WB', 'd1': 'WQ', 'e1': 'WK', 'f1': 'WB', 'g1': 'WN', 'h1': 'WR'}
+FILE2PIXEL = {'a': 0, 'b': 64, 'c': 128, 'd': 192, 'e': 256, 'f': 320, 'g': 384, 'h': 448}
+RANK2PIXEL = {'8': 0, '7': 64, '6': 128, '5': 192, '4': 256, '3': 320, '2': 384, '1': 448}
+
+
+
+game_state = {'a8': 'BR', 'b8': 'BN', 'c8': 'BB', 'd8': 'BQ', 'e8': 'BK', 'f8': 'BB', 'g8': 'BN', 'h8': 'BR',
+              'a7': 'BP', 'b7': 'BP', 'c7': 'BP', 'd7': 'BP', 'e7': 'BP', 'f7': 'BP', 'g7': 'BP', 'h7': 'BP',
+              'a6': '', 'b6': '', 'c6': '', 'd6': '', 'e6': '', 'f6': '', 'g6': '', 'h6': '',
+              'a5': '', 'b5': '', 'c5': '', 'd5': '', 'e5': '', 'f5': '', 'g5': '', 'h5': '',
+              'a4': '', 'b4': '', 'c4': '', 'd4': '', 'e4': '', 'f4': '', 'g4': '', 'h4': '',
+              'a3': '', 'b3': '', 'c3': '', 'd3': '', 'e3': '', 'f3': '', 'g3': '', 'h3': '',
+              'a2': 'WP', 'b2': 'WP', 'c2': 'WP', 'd2': 'WP', 'e2': 'WP', 'f2': 'WP', 'g2': 'WP', 'h2': 'WP',
+              'a1': 'WR', 'b1': 'WN', 'c1': 'WB', 'd1': 'WQ', 'e1': 'WK', 'f1': 'WB', 'g1': 'WN', 'h1': 'WR'}
 # End Init. Variables #
 
 
-def find_piece_vertically(destination, piece):
-    if piece[1] == "P":
+def add_to_file(file, value):
+    return chr(ord(file) + value)
 
 
+def isSquareWhite(square):
+    diff = FILE2PIXEL[square[0]] - RANK2PIXEL[square[1]]
+    return True if abs(diff/64) % 2 == 0 else False
 
+
+# def find_piece_vertically(destination, piece):
+#     file = destination[0]
+#     rank = destination[1]
+#
+#     if piece == 'BP':
+#         if game_state[file + str(int(rank)+1)] == piece:
+#             return file + str(int(rank)+1)
+#         else:
+#             return file + str(int(rank)+2)
+#     elif piece == 'WP':
+#         if game_state[file + str(int(rank)-1)] == piece:
+#             return file + str(int(rank)-1)
+#         else:
+#             return file + str(int(rank)-2)
+#
+#     return 'e5'
+
+def find_bishop(destination, piece):
+    # if isSquareWhite(destination)
+    for square, p in game_state.items():
+        if p == piece and isSquareWhite(destination) == isSquareWhite(square):
+            return square
+
+
+def find_knight(destination, piece):
+    file = destination[0]
+    rank = destination[1]
+
+    try:
+        if game_state[add_to_file(file, 1) + str(int(rank)+2)] == piece:
+            return add_to_file(file, 1) + str(int(rank) + 2)
+    except KeyError:
+            pass
+    try:
+        if game_state[add_to_file(file, -1) + str(int(rank)+2)] == piece:
+            return add_to_file(file, -1) + str(int(rank)+2)
+    except KeyError:
+            pass
+    try:
+        if game_state[add_to_file(file, 2) + str(int(rank)+1)] == piece:
+            return add_to_file(file, 2) + str(int(rank)+1)
+    except KeyError:
+            pass
+    try:
+        if game_state[add_to_file(file, 2) + str(int(rank)-1)] == piece:
+            return add_to_file(file, 2) + str(int(rank)-1)
+    except KeyError:
+            pass
+    try:
+        if game_state[add_to_file(file, -2) + str(int(rank)+1)] == piece:
+            return add_to_file(file, -2) + str(int(rank)+1)
+    except KeyError:
+            pass
+    try:
+        if game_state[add_to_file(file, -2) + str(int(rank)-1)] == piece:
+            return add_to_file(file, -2) + str(int(rank)-1)
+    except KeyError:
+            pass
+    try:
+        if game_state[add_to_file(file, 1) + str(int(rank)-2)] == piece:
+            return add_to_file(file, 1) + str(int(rank)-2)
+    except KeyError:
+            pass
+    try:
+        if game_state[add_to_file(file, -1) + str(int(rank)-2)] == piece:
+            return add_to_file(file, -1) + str(int(rank)-2)
+    except KeyError:
+            pass
 
 
 def get_moves(pgn_file):
@@ -53,9 +128,174 @@ def get_moves(pgn_file):
     for line in pgn_lines:
         if line.startswith("1. "):
             move_line = re.sub("\d+\.\s", "", line)
+            move_line = re.sub("\+|\#", "", move_line)
             break
-
+    print(move_line)
     return move_line.split()
+
+
+# maybe use this for all pieces
+def check_squares(destination, piece, directions, inc):
+    file = destination[0]
+    rank = destination[1]
+    for index, direction in enumerate(directions):
+        if direction == 0:
+            continue
+
+        if index == 0:  # up
+            try:
+                p = game_state[add_to_file(file, 0) + str(int(rank) + inc)]
+            except KeyError:
+                directions[index] = 0
+                continue
+            if p == piece:
+                return add_to_file(file, 0) + str(int(rank)+inc)
+            elif p != "":
+                directions[index] = 0
+        elif index == 1:  # up-right
+            try:
+                p = game_state[add_to_file(file, inc) + str(int(rank) + inc)]
+            except KeyError:
+                directions[index] = 0
+                continue
+            if p == piece:
+                return add_to_file(file, inc) + str(int(rank) + inc)
+            elif p != "":
+                directions[index] = 0
+        elif index == 2:  # right
+            try:
+                p = game_state[add_to_file(file, inc) + str(int(rank) + 0)]
+            except KeyError:
+                directions[index] = 0
+                continue
+            if p == piece:
+                return add_to_file(file, inc) + str(int(rank) + 0)
+            elif p != "":
+                directions[index] = 0
+        elif index == 3:  # down-right
+            try:
+                p = game_state[add_to_file(file, inc) + str(int(rank) + -inc)]
+            except KeyError:
+                directions[index] = 0
+                continue
+            if p == piece:
+                return add_to_file(file, inc) + str(int(rank) + -inc)
+            elif p != "":
+                directions[index] = 0
+        elif index == 4:  # down
+            try:
+                p = game_state[add_to_file(file, 0) + str(int(rank) + -inc)]
+            except KeyError:
+                directions[index] = 0
+                continue
+            if p == piece:
+                return add_to_file(file, 0) + str(int(rank) + -inc)
+            elif p != "":
+                directions[index] = 0
+        elif index == 5:  # down-left
+            try:
+                p = game_state[add_to_file(file, -inc) + str(int(rank) + -inc)]
+            except KeyError:
+                directions[index] = 0
+                continue
+            if p == piece:
+                return add_to_file(file, -inc) + str(int(rank) + -inc)
+            elif p != "":
+                directions[index] = 0
+        elif index == 6:  # left
+            try:
+                p = game_state[add_to_file(file, -inc) + str(int(rank) + 0)]
+            except KeyError:
+                directions[index] = 0
+                continue
+            if p == piece:
+                return add_to_file(file, -inc) + str(int(rank) + 0)
+            elif p != "":
+                directions[index] = 0
+        elif index == 7:  # left-up
+            try:
+                p = game_state[add_to_file(file, -inc) + str(int(rank) + inc)]
+            except KeyError:
+                directions[index] = 0
+                continue
+            if p == piece:
+                return add_to_file(file, -inc) + str(int(rank) + inc)
+            elif p != "":
+                directions[index] = 0
+    return None
+
+
+def find_rook(destination, piece):
+    # Clockwise (up first)
+    directions = [1, 0, 1, 0, 1, 0, 1, 0]
+    source = None
+    inc = 1
+    while source is None:
+        source = check_squares(destination, piece, directions, inc)
+        inc += 1
+    return source
+
+
+def find_king(destination, piece):
+    # Clockwise (up first)
+    directions = [1, 1, 1, 1, 1, 1, 1, 1]
+    inc = 1
+    source = check_squares(destination, piece, directions, inc)
+    return source
+
+
+def find_queen(destination, piece):
+    # Clockwise (up first)
+    directions = [1, 1, 1, 1, 1, 1, 1, 1]
+    source = None
+    inc = 1
+    while source is None:
+        source = check_squares(destination, piece, directions, inc)
+        inc += 1
+    return source
+
+
+def find_pawn(destination, piece, isCapture):
+    if isCapture:
+        if piece[0] == 'B':
+            # Clockwise (up first)
+            directions = [0, 1, 0, 0, 0, 0, 0, 1]
+        else:
+            # Clockwise (up first)
+            directions = [0, 0, 0, 1, 0, 1, 0, 0]
+
+        # Checking en passant
+        if game_state[destination] == '':
+            file = destination[0]
+            rank = destination[1]
+
+            # Finding captured pawn
+            if piece[0] == 'B':
+                captured_pawn = file + str(int(rank) + 1)
+            else:
+                captured_pawn = file + str(int(rank) - 1)
+
+            # Updating game board (img) and game state
+            if isSquareWhite(captured_pawn):
+                GameBoard_img.paste(WS_img, coord2pixel(captured_pawn))
+            else:
+                GameBoard_img.paste(BS_img, coord2pixel(captured_pawn))
+
+            game_state[captured_pawn] = ''
+    else:
+        if piece[0] == 'B':
+            # Clockwise (up first)
+            directions = [1, 0, 0, 0, 0, 0, 0, 0]
+        else:
+            # Clockwise (up first)
+            directions = [0, 0, 0, 0, 1, 0, 0, 0]
+
+    source, inc = None, 1
+    while source is None:
+        source = check_squares(destination, piece, directions, inc)
+        inc += 1
+
+    return source
 
 
 def next_move(move, blacks_turn):
@@ -63,21 +303,69 @@ def next_move(move, blacks_turn):
 
     if move[0].islower():  # Pawn
         piece = 'BP' if blacks_turn else 'WP'
+        isCapture = True if move[1] == 'x' else False
+        promote = move[-1] if move[-1].isupper() else ''
 
-        if move[1].isdigit():  # Vertical Move
+        if isCapture:  # Vertical Move
+            destination = move[2:4]
+        else:
             destination = move[0:2]
-            source = find_piece_vertically(destination, piece)
+
+        source = find_pawn(destination, piece, isCapture)
+        if promote != '':
+            piece = piece[0] + promote
+
+    elif move[0] == 'N':
+        piece = 'BN' if blacks_turn else 'WN'
+        destination = move[-2:]
+        source = find_knight(destination, piece)
+    elif move[0] == 'B':
+        piece = 'BB' if blacks_turn else 'WB'
+        destination = move[1:3]
+        source = find_bishop(destination, piece)
+    elif move[0] == 'O' and len(move) == 3:
+        update_position('WK', 'e1', 'g1')
+        update_position('WR', 'h1', 'f1')
+        return
+    elif move[0] == 'Q':
+        piece = 'BQ' if blacks_turn else 'WQ'
+        destination = move[-2:]
+        source = find_queen(destination, piece)
+    elif move[0] == 'R':
+        piece = 'BR' if blacks_turn else 'WR'
+        if len(move) > 3:
+            destination = move[2:4]
+            source = move[1] + move[3]
+        else:
+            destination = move[1:3]
+            source = find_rook(destination, piece)
+    elif move[0] == 'K':
+        piece = 'BK' if blacks_turn else 'WK'
+        destination = move[-2:]
+        source = find_king(destination, piece)
 
     update_position(piece, source, destination)
 
 
 def coord2pixel(coord):
-    return FILE2X[coord[0]], RANK2Y[coord[1]]
+    return FILE2PIXEL[coord[0]], RANK2PIXEL[coord[1]]
 
 
 def update_position(piece, source, destination):
+    game_state[source] = ""
+    game_state[destination] = piece
+
+    if isSquareWhite(destination):
+        GameBoard_img.paste(WS_img, coord2pixel(destination))
+    else:
+        GameBoard_img.paste(BS_img, coord2pixel(destination))
+
     GameBoard_img.paste(PIECES2IMAGES[piece], coord2pixel(destination), PIECES2IMAGES[piece])
 
+    if isSquareWhite(source):
+        GameBoard_img.paste(WS_img, coord2pixel(source))
+    else:
+        GameBoard_img.paste(BS_img, coord2pixel(source))
 
 
 def create_gif(pgn_file):
@@ -86,10 +374,11 @@ def create_gif(pgn_file):
     images = [np.array(GameBoard_img)]
 
     for i, move in enumerate(moves):
+        print(move)
         next_move(move, i % 2)
         images.append(np.array(GameBoard_img))
-        if i == 1:
-            break
+        # if i == 36:
+        #     break
 
     #
     # print(images)
