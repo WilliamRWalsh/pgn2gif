@@ -6,8 +6,6 @@ import re
 
 # Init. Variables #
 # This image will be updated
-GameBoard_img = Image.open('images/ChessBoard.png')
-
 WS_img = Image.open('images/WhiteSquare.png')
 WK_img = Image.open('images/WhiteKing.png')
 WQ_img = Image.open('images/WhiteQueen.png')
@@ -29,17 +27,6 @@ PIECES2IMAGES = {'WK': WK_img, 'BK': BK_img, 'WQ': WQ_img, 'BQ': BQ_img, 'WR': W
 
 FILE2PIXEL = {'a': 0, 'b': 64, 'c': 128, 'd': 192, 'e': 256, 'f': 320, 'g': 384, 'h': 448}
 RANK2PIXEL = {'8': 0, '7': 64, '6': 128, '5': 192, '4': 256, '3': 320, '2': 384, '1': 448}
-
-
-
-game_state = {'a8': 'BR', 'b8': 'BN', 'c8': 'BB', 'd8': 'BQ', 'e8': 'BK', 'f8': 'BB', 'g8': 'BN', 'h8': 'BR',
-              'a7': 'BP', 'b7': 'BP', 'c7': 'BP', 'd7': 'BP', 'e7': 'BP', 'f7': 'BP', 'g7': 'BP', 'h7': 'BP',
-              'a6': '', 'b6': '', 'c6': '', 'd6': '', 'e6': '', 'f6': '', 'g6': '', 'h6': '',
-              'a5': '', 'b5': '', 'c5': '', 'd5': '', 'e5': '', 'f5': '', 'g5': '', 'h5': '',
-              'a4': '', 'b4': '', 'c4': '', 'd4': '', 'e4': '', 'f4': '', 'g4': '', 'h4': '',
-              'a3': '', 'b3': '', 'c3': '', 'd3': '', 'e3': '', 'f3': '', 'g3': '', 'h3': '',
-              'a2': 'WP', 'b2': 'WP', 'c2': 'WP', 'd2': 'WP', 'e2': 'WP', 'f2': 'WP', 'g2': 'WP', 'h2': 'WP',
-              'a1': 'WR', 'b1': 'WN', 'c1': 'WB', 'd1': 'WQ', 'e1': 'WK', 'f1': 'WB', 'g1': 'WN', 'h1': 'WR'}
 # End Init. Variables #
 
 
@@ -52,23 +39,6 @@ def isSquareWhite(square):
     return True if abs(diff/64) % 2 == 0 else False
 
 
-# def find_piece_vertically(destination, piece):
-#     file = destination[0]
-#     rank = destination[1]
-#
-#     if piece == 'BP':
-#         if game_state[file + str(int(rank)+1)] == piece:
-#             return file + str(int(rank)+1)
-#         else:
-#             return file + str(int(rank)+2)
-#     elif piece == 'WP':
-#         if game_state[file + str(int(rank)-1)] == piece:
-#             return file + str(int(rank)-1)
-#         else:
-#             return file + str(int(rank)-2)
-#
-#     return 'e5'
-
 def find_bishop(destination, piece):
     # if isSquareWhite(destination)
     for square, p in game_state.items():
@@ -76,65 +46,72 @@ def find_bishop(destination, piece):
             return square
 
 
-def find_knight(destination, piece):
+def find_knight(destination, piece, distinction):
     file = destination[0]
     rank = destination[1]
 
     try:
-        if game_state[add_to_file(file, 1) + str(int(rank)+2)] == piece:
-            return add_to_file(file, 1) + str(int(rank) + 2)
+        source = add_to_file(file, 1) + str(int(rank)+2)
+        if game_state[source] == piece and (distinction is None or distinction in source):
+            return source
     except KeyError:
             pass
     try:
-        if game_state[add_to_file(file, -1) + str(int(rank)+2)] == piece:
-            return add_to_file(file, -1) + str(int(rank)+2)
+        source = add_to_file(file, -1) + str(int(rank)+2)
+        if game_state[source] == piece and (distinction is None or distinction in source):
+            return source
     except KeyError:
             pass
     try:
-        if game_state[add_to_file(file, 2) + str(int(rank)+1)] == piece:
-            return add_to_file(file, 2) + str(int(rank)+1)
+        source = add_to_file(file, 2) + str(int(rank)+1)
+        if game_state[source] == piece and (distinction is None or distinction in source):
+            return source
     except KeyError:
             pass
     try:
-        if game_state[add_to_file(file, 2) + str(int(rank)-1)] == piece:
-            return add_to_file(file, 2) + str(int(rank)-1)
+        source = add_to_file(file, 2) + str(int(rank)-1)
+        if game_state[source] == piece and (distinction is None or distinction in source):
+            return source
     except KeyError:
             pass
     try:
-        if game_state[add_to_file(file, -2) + str(int(rank)+1)] == piece:
-            return add_to_file(file, -2) + str(int(rank)+1)
+        source = add_to_file(file, -2) + str(int(rank)+1)
+        if game_state[source] == piece and (distinction is None or distinction in source):
+            return source
     except KeyError:
             pass
     try:
-        if game_state[add_to_file(file, -2) + str(int(rank)-1)] == piece:
-            return add_to_file(file, -2) + str(int(rank)-1)
+        source = add_to_file(file, -2) + str(int(rank)-1)
+        if game_state[source] == piece and (distinction is None or distinction in source):
+            return source
     except KeyError:
             pass
     try:
-        if game_state[add_to_file(file, 1) + str(int(rank)-2)] == piece:
-            return add_to_file(file, 1) + str(int(rank)-2)
+        source = add_to_file(file, 1) + str(int(rank)-2)
+        if game_state[source] == piece and (distinction is None or distinction in source):
+            return source
     except KeyError:
             pass
     try:
-        if game_state[add_to_file(file, -1) + str(int(rank)-2)] == piece:
-            return add_to_file(file, -1) + str(int(rank)-2)
+        source = add_to_file(file, -1) + str(int(rank)-2)
+        if game_state[source] == piece and (distinction is None or distinction in source):
+            return source
     except KeyError:
             pass
 
 
-def get_moves(pgn_file):
-    pgn_lines = open(pgn_file, "r")
+def get_moves(pgn):
+    pgn_lines = open(pgn, "r")
 
     for line in pgn_lines:
-        if line.startswith("1. "):
-            move_line = re.sub("\d+\.\s", "", line)
+        if line.startswith("1."):
+            move_line = re.sub("\d+\.\s?", "", line)
             move_line = re.sub("\+|\#", "", move_line)
             break
-    print(move_line)
+
     return move_line.split()
 
 
-# maybe use this for all pieces
 def check_squares(destination, piece, directions, inc):
     file = destination[0]
     rank = destination[1]
@@ -244,13 +221,15 @@ def find_king(destination, piece):
     return source
 
 
-def find_queen(destination, piece):
+def find_queen(destination, piece, distinction):
     # Clockwise (up first)
     directions = [1, 1, 1, 1, 1, 1, 1, 1]
     source = None
     inc = 1
     while source is None:
         source = check_squares(destination, piece, directions, inc)
+        if distinction is not None and distinction not in source:
+            source = None
         inc += 1
     return source
 
@@ -299,6 +278,7 @@ def find_pawn(destination, piece, isCapture):
 
 
 def next_move(move, blacks_turn):
+
     piece = source = destination = None
 
     if move[0].islower():  # Pawn
@@ -306,7 +286,7 @@ def next_move(move, blacks_turn):
         isCapture = True if move[1] == 'x' else False
         promote = move[-1] if move[-1].isupper() else ''
 
-        if isCapture:  # Vertical Move
+        if isCapture:
             destination = move[2:4]
         else:
             destination = move[0:2]
@@ -318,27 +298,51 @@ def next_move(move, blacks_turn):
     elif move[0] == 'N':
         piece = 'BN' if blacks_turn else 'WN'
         destination = move[-2:]
-        source = find_knight(destination, piece)
+        if (len(move) == 4 and move[1] != 'x') or len(move) == 5:
+            distinction = move[1]
+        else:
+            distinction = None
+        source = find_knight(destination, piece, distinction)
     elif move[0] == 'B':
         piece = 'BB' if blacks_turn else 'WB'
-        destination = move[1:3]
+        destination = move[-2:]
         source = find_bishop(destination, piece)
-    elif move[0] == 'O' and len(move) == 3:
-        update_position('WK', 'e1', 'g1')
-        update_position('WR', 'h1', 'f1')
+    elif move == 'O-O':
+        if blacks_turn:
+            update_position('BK', 'e8', 'g8')
+            update_position('BR', 'h8', 'f8')
+        else:
+            update_position('WK', 'e1', 'g1')
+            update_position('WR', 'h1', 'f1')
+        return
+    elif move == 'O-O-O':
+        if blacks_turn:
+            update_position('BK', 'e8', 'c8')
+            update_position('BR', 'a8', 'd8')
+        else:
+            update_position('WK', 'e1', 'c1')
+            update_position('WR', 'a1', 'd1')
         return
     elif move[0] == 'Q':
         piece = 'BQ' if blacks_turn else 'WQ'
         destination = move[-2:]
-        source = find_queen(destination, piece)
+        if (len(move) == 4 and move[1] != 'x') or len(move) == 5:
+            distinction = move[1]
+        else:
+            distinction = None
+
+        source = find_queen(destination, piece, distinction)
     elif move[0] == 'R':
         piece = 'BR' if blacks_turn else 'WR'
-        if len(move) > 3:
-            destination = move[2:4]
-            source = move[1] + move[3]
+        destination = move[-2:]
+        if (len(move) == 4 and move[1] != 'x') or len(move) == 5:
+            if move[1].isdigit():
+                source = move[-2] + move[1]
+            else:
+                source = move[1] + move[-1]
         else:
-            destination = move[1:3]
             source = find_rook(destination, piece)
+
     elif move[0] == 'K':
         piece = 'BK' if blacks_turn else 'WK'
         destination = move[-2:]
@@ -368,37 +372,34 @@ def update_position(piece, source, destination):
         GameBoard_img.paste(BS_img, coord2pixel(source))
 
 
-def create_gif(pgn_file):
-    moves = get_moves(pgn_file)
+def create_gif(pgn):
+    print("Creating gif for: " + pgn)
+
+    global GameBoard_img
+    GameBoard_img = Image.open('images/ChessBoard.png')
+
+    global game_state
+    game_state = {'a8': 'BR', 'b8': 'BN', 'c8': 'BB', 'd8': 'BQ', 'e8': 'BK', 'f8': 'BB', 'g8': 'BN', 'h8': 'BR',
+                  'a7': 'BP', 'b7': 'BP', 'c7': 'BP', 'd7': 'BP', 'e7': 'BP', 'f7': 'BP', 'g7': 'BP', 'h7': 'BP',
+                  'a6': '', 'b6': '', 'c6': '', 'd6': '', 'e6': '', 'f6': '', 'g6': '', 'h6': '',
+                  'a5': '', 'b5': '', 'c5': '', 'd5': '', 'e5': '', 'f5': '', 'g5': '', 'h5': '',
+                  'a4': '', 'b4': '', 'c4': '', 'd4': '', 'e4': '', 'f4': '', 'g4': '', 'h4': '',
+                  'a3': '', 'b3': '', 'c3': '', 'd3': '', 'e3': '', 'f3': '', 'g3': '', 'h3': '',
+                  'a2': 'WP', 'b2': 'WP', 'c2': 'WP', 'd2': 'WP', 'e2': 'WP', 'f2': 'WP', 'g2': 'WP', 'h2': 'WP',
+                  'a1': 'WR', 'b1': 'WN', 'c1': 'WB', 'd1': 'WQ', 'e1': 'WK', 'f1': 'WB', 'g1': 'WN', 'h1': 'WR'}
+
+    moves = get_moves(pgn)
 
     images = [np.array(GameBoard_img)]
 
     for i, move in enumerate(moves):
-        print(move)
         next_move(move, i % 2)
         images.append(np.array(GameBoard_img))
-        # if i == 36:
-        #     break
 
-    #
-    # print(images)
-
-    imageio.mimsave('result.gif', images, duration=1)
+    imageio.mimsave(pgn[:-3] + 'gif', images, duration=0.5)
 
 
 if __name__ == '__main__':
 
     for pgn_file in glob.glob('*.pgn'):
         create_gif(pgn_file)
-
-
-
-
-
-
-
-
-
-
-
-
