@@ -5,7 +5,6 @@ import numpy as np
 import re
 
 # Init. Variables #
-# This image will be updated
 WS_img = Image.open('images/WhiteSquare.png')
 WK_img = Image.open('images/WhiteKing.png')
 WQ_img = Image.open('images/WhiteQueen.png')
@@ -396,7 +395,7 @@ def create_gif(pgn):
         next_move(move, i % 2)
         images.append(np.array(GameBoard_img))
 
-    imageio.mimsave(pgn[:-3] + 'gif', images, duration=0.5)
+    imageio.mimsave(pgn[:-3] + 'gif', images, duration=0.8)
 
 
 if __name__ == '__main__':
